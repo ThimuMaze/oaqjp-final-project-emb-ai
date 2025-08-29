@@ -19,13 +19,23 @@ def find_dominant_emotion(dict):
 def emotion_detector(text_to_analyze):
     json_obj = {"raw_document": {"text": text_to_analyze}}
     response = requests.post(url , json=json_obj , headers = header)
-    response_json = json.loads(response.text)
-    anger = response_json['emotionPredictions'][0]['emotion']['anger']
-    disgust = response_json['emotionPredictions'][0]['emotion']['disgust']
-    fear = response_json['emotionPredictions'][0]['emotion']['fear']
-    joy = response_json['emotionPredictions'][0]['emotion']['joy']
-    sadness = response_json['emotionPredictions'][0]['emotion']['sadness']
-    response_dict = {"anger" : anger , "disgust" : disgust, "fear":fear , "joy":joy,"sadness":sadness}
-    dominant_val = find_dominant_emotion(response_dict)
-    response_dict["dominant_emotion"] = dominant_val
+    response_dict={}
+    print(response.status_code)
+    if response.status_code == 200:
+        response_json = json.loads(response.text)
+        anger = response_json['emotionPredictions'][0]['emotion']['anger']
+        disgust = response_json['emotionPredictions'][0]['emotion']['disgust']
+        fear = response_json['emotionPredictions'][0]['emotion']['fear']
+        joy = response_json['emotionPredictions'][0]['emotion']['joy']
+        sadness = response_json['emotionPredictions'][0]['emotion']['sadness']
+        response_dict = {"anger" : anger , "disgust" : disgust, "fear":fear , "joy":joy,"sadness":sadness}
+        dominant_val = find_dominant_emotion(response_dict)
+        response_dict["dominant_emotion"] = dominant_val
+    elif response.status_code == 400:
+        anger = None
+        disgust = None
+        fear = None
+        joy = None
+        sadness = None
+        response_dict = {"anger" : anger , "disgust" : disgust, "fear":fear , "joy":joy,"sadness":sadness,"dominant_emotion":None}
     return response_dict
